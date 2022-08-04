@@ -23,7 +23,7 @@ def index():
         else:
             server_message = client_message
     dict = {}
-    for i in os.listdir('static\img'):
+    for i in os.listdir('static/img'):
         name = i.split('.')
         dict[name[0]] = name[1]
         print(name)
@@ -55,10 +55,9 @@ def fullimg(img):
 def add_img():
     if request.method == 'POST':
         datas = request.files['files[]']
-        t = datas.save(os.path.join(app.config['UPLOAD_FOLDER'], datas.filename))
+        filename = datas.filename
+        datas.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     return render_template('input_file.html')
 
 
-if __name__ == '__main__':
-    app.run(host='192.168.0.106', port=80, debug=True)
 
