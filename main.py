@@ -1,10 +1,12 @@
 from flask import Flask
 from flask import render_template, request
+import os
+from os.path import dirname, join
+
 
 
 app = Flask(__name__)
-
-
+app.config['UPLOAD_FOLDER'] = '.\\static\\img'
 @app.route('/', methods=['get', 'post'])
 def index():
     server_message = ''
@@ -13,17 +15,26 @@ def index():
     if request.method == 'POST':
         client_message = request.form.get('message')
 
+
         if client_message.lower() == 'hi':
             server_message = 'Hell1'
         elif client_message == 'mama':
             server_message = 'Privet'
         else:
             server_message = client_message
+    dict = {}
+    for i in os.listdir('static\img'):
+        name = i.split('.')
+        dict[name[0]] = name[1]
+        print(name)
+
+        name = ''
 
     return render_template(
         'index.html',
-        message=server_message, dict={'Landerix' : '1.png', 'Vasya' : 'vasya.png', 'Landerix' : '1.png', 'Vasya' : 'vasya.png'}
-    )
+        message=server_message, dict=dict)
+
+
 
 
 
@@ -37,6 +48,17 @@ def info(nick):
     return render_template('info.html', nick=nick)
 
 
+@app.route('/fullimg/<img>')
+def fullimg(img):
+    return render_template('fullimg.html', img=img)
+@app.route('/upload_img/', methods=['get', 'post'])
+def add_img():
+    if request.method == 'POST':
+        datas = request.files['files[]']
+        t = datas.save(os.path.join(app.config['UPLOAD_FOLDER'], datas.filename))
+    return render_template('input_file.html')
+
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=80)
+    app.run(host='192.168.0.106', port=80, debug=True)
+
